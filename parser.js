@@ -1,5 +1,6 @@
 'use strict';
 
+import Result from './result.js';
 import AST from './ast.js';
 
 const parse = (tokens) => {
@@ -23,56 +24,38 @@ const parse = (tokens) => {
 
   const parseNumber = () => {
     if (!peek().type == 'number') {
-      return {
-        result: 'failure',
-        reason: 'Expected an number but got a ' + peek().type
-      };
+      return Result.failure('Expected an number but got a ' + peek().type);
     }
     const expression = AST.numberExpression(peek().value);
     move();
-    return {
-      result: 'success',
-      expression
-    };
+    return Result.success(expression);
   };
 
   const parseIdentifier = () => {
     if (!peek().type == 'identifier') {
-      return {
-        result: 'failure',
-        reason: 'Expected an identifier but got a ' + peek().type
-      };
+      return Result.failure('Expected an identifier but got a ' + peek().type);
     }
     const expression = AST.identifierExpression(peek().value);
     move();
-    return {
-      result: 'success',
-      expression
-    };
+    return Result.success(expression);
   };
 
   const parseApplication = () => {
     if (!peek().type == 'leftParen') {
-      return {
-        result: 'failure',
-        reason: 'Expected an expression but got a ' + peek().type
-      };
+      return Result.failure('Expected an expression but got a ' + peek().type);
     }
     move();
     let elements = [];
     while (peek().type != 'rightParen') {
       const i = parseExpression();
-      if (i.result != 'success') {
+      if (!Result.isSuccess(i)) {
         return i;
       }
-      elements.push(i.expression);
+      elements.push(i.value);
     }
     move();
     const expression = AST.applicationExpression(elements);
-    return {
-      result: 'success',
-      expression
-    }
+    return Result.success(expression);
   };
 
   const parseExpression = () => {
@@ -85,23 +68,15 @@ const parse = (tokens) => {
     if (peek().type == 'identifier') {
       return parseIdentifier();
     }
-    return {
-      result: 'failure',
-      reason: 'Expected an expression but got a ' + peek().type
-    };
+    return Result.failure('Expected an expression but got a ' + peek().type);
   };
 
   const i = parseExpression();
-
-  if (i.result == 'success') {
+  if (Result.isSuccess(i)) {
     if (peek().type != 'eos') {
-      return {
-        result: 'failure',
-        reason: 'Expected an EOS but got a ' + peek().type
-      }
+      return Result.failure('Expected an EoS but got a ' + peek().type);
     }
   }
-
   return i;
 };
 

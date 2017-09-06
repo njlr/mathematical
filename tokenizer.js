@@ -1,5 +1,7 @@
 'use strict';
 
+import Result from './result.js';
+
 const tokenize = (input) => {
 
   let position = 0;
@@ -90,15 +92,9 @@ const tokenize = (input) => {
       tokens.push(processNumber());
       continue;
     }
-    return {
-      result: 'failure',
-      reason: 'Unexpected character "' + next + '" at position ' + position
-    };
+    return Result.failure('Unexpected character "' + next + '" at position ' + position);
   }
-  return {
-    result: 'success',
-    tokens
-  };
+  return Result.success(tokens);
 };
 
 module.exports = {
