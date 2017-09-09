@@ -2,7 +2,9 @@
 
 ![Alt text](/mathematical.png?raw=true "Mathematical")
 
-Mathematical expressions in a lispy syntax.
+Mathematical expressions in a lispy syntax. 
+
+Test it out in [the online REPL](https://njlr.github.io/mathematical/)!
 
 ## Instructions
 
